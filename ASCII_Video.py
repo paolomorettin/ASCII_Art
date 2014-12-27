@@ -69,7 +69,7 @@ class ASCII_Video :
 
         '''
         with open(path,'r') as frame_file :
-            http://fourcc.org/codecs.phpframes = []
+            frames = []
             for f in frame_file.read().split('\n\n') :
                 frames.append(map(list,f[:-1].split('\n')))
             return frames
