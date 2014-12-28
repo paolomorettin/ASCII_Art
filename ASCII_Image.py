@@ -1,9 +1,9 @@
-
+import os
 import Image,ImageDraw,ImageFont
 
 class ASCII_Image :
     greyscale_ascii = [' ','.',"'",'"','-',':','~','=','+','x','%','$','H','Z','X','#','@']
-    #greyscale_ascii = [' ','.',"'",'"','-',':','+','x','%','H','#','@']
+    default_font_path = os.path.dirname(os.path.abspath(__file__)) + "/data/DroidSansMono.ttf"
 
     @staticmethod
     def openImage(path) :
@@ -22,7 +22,7 @@ class ASCII_Image :
         image.save(path)
 
     @staticmethod
-    def text_to_image(frame,width,fontsize = None,fg_color=(255,255,255),bg_color=(0,0,0)) :
+    def textToImage(frame,width,fontsize = None,fg_color=(255,255,255),bg_color=(0,0,0)) :
         '''
         Converts an ASCII-art frame into a PIL Image. If no fontsize is passed, it determines the best-fitting
         size with a binary search. Returns the image and the fontsize for future uses.
@@ -42,7 +42,7 @@ class ASCII_Image :
             # initial font size
             bounds = [1, width * 2]
             fontsize = bounds[0] + int((bounds[1]-bounds[0])/2.)
-            font = ImageFont.truetype("./data/DroidSansMono.ttf", fontsize)
+            font = ImageFont.truetype(ASCII_Image.default_font_path, fontsize)
             # calculate the right font size to fit the image width, using a binary search
             first_row = ''.join(frame[0])
             while bounds[1] - bounds[0] > 2 :
@@ -51,9 +51,9 @@ class ASCII_Image :
                 else :
                     bounds[0] = fontsize
                 fontsize = bounds[0] + int((bounds[1]-bounds[0])/2.)
-                font = ImageFont.truetype("./data/DroidSansMono.ttf", fontsize)
+                font = ImageFont.truetype(ASCII_Image.default_font_path, fontsize)
         else :
-            font = ImageFont.truetype("./data/DroidSansMono.ttf", fontsize)
+            font = ImageFont.truetype(ASCII_Image.default_font_path, fontsize)
 
         height = len(frame) * fontsize
         image = Image.new("RGB", (width,height), bg_color)
@@ -65,7 +65,7 @@ class ASCII_Image :
         return image,fontsize
 
     @classmethod
-    def greyscale_process(cls,image,hDef,vDef,inverse=False,normalize=False) :
+    def greyscaleProcess(cls,image,hDef,vDef,inverse=False,normalize=False) :
         '''
         This converts a PIL image into a matrix (list of lists) of ASCII characters, selected according to the
         average greyscale value of each corresponing region.
@@ -105,6 +105,10 @@ class ASCII_Image :
                 matrix = [map(lambda x : int((float(x - gs_min)/gs_max)*255) , r) for r in matrix]
         alen = len(gs_list)
         return map(lambda row : map(lambda elem : gs_list[int((elem/256.)*alen)] , row), matrix)
+
+
+
+
 
 
 

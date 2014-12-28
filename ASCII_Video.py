@@ -6,8 +6,10 @@ from time import sleep
 
 class ASCII_Video :
 
+    out_video_extension = '.avi'
+
     @staticmethod
-    def ascii_to_video(frames,path,width,fps,fg_color=(255,255,255),bg_color=(0,0,0),codec='XVID') :
+    def asciiToVideo(frames,path,width,fps,fg_color=(255,255,255),bg_color=(0,0,0),codec='XVID') :
         '''
         Given a list of ASCII-art frames, produces a video.
         
@@ -22,20 +24,19 @@ class ASCII_Video :
         codec - string representing the codec to use (see http://fourcc.org/codecs.php)
 
         '''
-        image,fontsize = ASCII_Image.text_to_image(frames[0],width,fg_color=fg_color,bg_color=bg_color)
+        image,fontsize = ASCII_Image.textToImage(frames[0],width,fg_color=fg_color,bg_color=bg_color)
 
         fourcc = cv2.cv.CV_FOURCC(*codec)
-        video = cv2.VideoWriter(path, fourcc, fps, image.size)
+        video = cv2.VideoWriter(path + ASCII_Video.out_video_extension, fourcc, fps, image.size)
         image = numpy.array(image)
         video.write(image)
         
         i = 1
         for f in frames[1:] :
             i += 1
-            image,_ = ASCII_Image.text_to_image(f,width,fontsize=fontsize,fg_color=fg_color,bg_color=bg_color)
+            image,_ = ASCII_Image.textToImage(f,width,fontsize=fontsize,fg_color=fg_color,bg_color=bg_color)
             image = numpy.array(image)
             video.write(image)
-            print "{}/{}".format(str(i),str(len(frames)))
 
         # is it useful?
         #video.release()
@@ -75,7 +76,7 @@ class ASCII_Video :
             return frames
                 
     @staticmethod
-    def getVideoFrames(path,step=1,preprocess=False) : 
+    def getVideoFrames(path,step=1,preprocess=None) : 
         # NOTE: Online preprocessing of each frame is advised. This should be implemented in order to deal with big video files.
         '''
         Extracts a list of frames (PIL Images) from a video file.
@@ -84,21 +85,27 @@ class ASCII_Video :
         path - of the input video file
         (OPTIONAL)
         step - takes one frame every 'step' frames
+        preprocess - tuple of parameters (n.cols,n.rows,inverse,normalize) for the greyscaleProcess function. Online preprocessing of each frame.
 
         '''
         vc = cv2.VideoCapture(path)
         c=0
         frames = []
 
+        if preprocess != None :
+            cols,rows,inv,norm = preprocess
+
         if vc.isOpened():
             rval , frame = vc.read()
+            frame = Image.fromarray(frame) if preprocess == None else ASCII_Image.greyscaleProcess(Image.fromarray(frame),cols,rows,inverse=inv,normalize=norm)
             frames.append(frame)
         else:
             rval = False
         while rval:
              rval, frame = vc.read()
-             if c % step == 0 and rval :                    
-                 frames.append(Image.fromarray(frame))
+             if c % step == 0 and rval :
+                 frame = Image.fromarray(frame) if preprocess == None else ASCII_Image.greyscaleProcess(Image.fromarray(frame),cols,rows,inverse=inv,normalize=norm)
+                 frames.append(frame)
              c = c + 1
         vc.release()
         return frames
