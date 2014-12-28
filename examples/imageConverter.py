@@ -12,7 +12,7 @@ if __name__ == '__main__' :
     from ASCII_Image import * 
 
     
-    input_path = sys.argv[1] if len(sys.argv) == 2 else 'example_image.jpg'
+    input_path = sys.argv[1] if len(sys.argv) == 2 else os.path.dirname(os.path.abspath(__file__))+'/example_image.jpg'
     image = ASCII_Image.openImage(input_path)
     # parameters to play with
     rows = 40

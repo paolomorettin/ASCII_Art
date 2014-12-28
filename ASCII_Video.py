@@ -1,4 +1,4 @@
-import Image
+from PIL import Image
 import numpy
 import cv2
 from ASCII_Image import ASCII_Image

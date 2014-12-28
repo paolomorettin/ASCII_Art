@@ -1,5 +1,5 @@
 import os
-import Image,ImageDraw,ImageFont
+from PIL import Image,ImageDraw,ImageFont
 
 class ASCII_Image :
     greyscale_ascii = [' ','.',"'",'"','-',':','~','=','+','x','%','$','H','Z','X','#','@']
