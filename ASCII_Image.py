@@ -84,13 +84,16 @@ class ASCII_Image :
         h_gap = width/hDef
         v_gap = height/vDef
 
-        for i in xrange(vDef) :
+        # Converts the image to greyscale
+        image = image.convert('L')
+
+        for i in range(vDef):
             matrix.append([])
-            for j in xrange(hDef) :
+            for j in range(hDef) :
                 gs_value = 0
                 for x in range(j*h_gap,(j+1)*h_gap) :
-                    for y in range(i*v_gap,(i+1)*v_gap) :                        
-                        gs_value += sum(image.getpixel( (x,y) )[:3])/3
+                    for y in range(i*v_gap,(i+1)*v_gap) :           
+                        gs_value += image.getpixel((x,y))
                 matrix[-1].append( gs_value / (v_gap * h_gap) )
 
         gs_list = list(cls.greyscale_ascii)
