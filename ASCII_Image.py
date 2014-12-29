@@ -79,23 +79,13 @@ class ASCII_Image :
         normalize - boolean, normalize the averaged grayscale values
 
         '''
-        matrix = []
-        width,height = image.size
-        h_gap = width/hDef
-        v_gap = height/vDef
-
         # Converts the image to greyscale
         image = image.convert('L')
 
-        for i in range(vDef):
-            matrix.append([])
-            for j in range(hDef) :
-                gs_value = 0
-                for x in range(j*h_gap,(j+1)*h_gap) :
-                    for y in range(i*v_gap,(i+1)*v_gap) :           
-                        gs_value += image.getpixel((x,y))
-                matrix[-1].append( gs_value / (v_gap * h_gap) )
-
+        # Resizes the image
+        pixels = list(image.resize((hDef,vDef),Image.ANTIALIAS).getdata())
+        matrix = [ pixels [i * hDef : (i + 1) * hDef - 1] for i in xrange(vDef)]
+   
         gs_list = list(cls.greyscale_ascii)
 
         if inverse :
