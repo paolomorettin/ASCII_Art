@@ -84,7 +84,7 @@ class ASCII_Image :
 
         # Resizes the image
         pixels = list(image.resize((hDef,vDef),Image.ANTIALIAS).getdata())
-        matrix = [ pixels [i * hDef : (i + 1) * hDef - 1] for i in xrange(vDef)]
+        matrix = [ pixels [i * hDef : (i + 1) * hDef - 1] for i in range(vDef)]
    
         gs_list = list(cls.greyscale_ascii)
 
@@ -95,13 +95,26 @@ class ASCII_Image :
             gs_min = min([min(r) for r in matrix])
             gs_max = max([max(r) for r in matrix])
             if gs_max > 0 :
-                matrix = [map(lambda x : int((float(x - gs_min)/gs_max)*255) , r) for r in matrix]
+                matrix = [list(map(lambda x : int((float(x - gs_min)/gs_max)*255) , r) for r in matrix)]
+
         alen = len(gs_list)
-        return map(lambda row : map(lambda elem : gs_list[int((elem/256.)*alen)] , row), matrix)
+        return list(map(lambda row : list(map(lambda elem : gs_list[int((elem/256.)*alen)] , row)), matrix))
 
 
 
+if __name__ == '__main__':
+    from sys import argv
+    from os.path import isfile
 
+    path = argv[1]
+    hDef, vDef = int(argv[2]), int(argv[3])
 
+    if isfile(path):
+        image = ASCII_Image.openImage(path)
+        text = ASCII_Image.greyscaleProcess(image,hDef,vDef, normalize=False)
+        print("\n".join(["".join(row) for row in text]))
 
+        textimage, _ = ASCII_Image.textToImage(text, 1500,fg_color=(255,255,255),bg_color=(0,0,0))
+        ASCII_Image.saveImage(textimage, path + "_mod.jpg")
 
+    
